@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "scrcpy-window.helloWorld",
-        "title": "Hello World"
+        "command": "scrcpy-vscode.start",
+        "title": "Start Scrcpy"
       }
     ]
   },

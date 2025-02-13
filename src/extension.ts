@@ -1,26 +1,54 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+    console.log('Scrcpy extension is now active!');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "scrcpy-window" is now active!');
+    let panel: vscode.WebviewPanel | undefined;
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('scrcpy-window.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from scrcpy-window!1234');
-	});
+    const disposable = vscode.commands.registerCommand('scrcpy-vscode.start', () => {
+        vscode.window.showInformationMessage('Scrcpy command executed!');
 
-	context.subscriptions.push(disposable);
+        if (!panel) {
+            panel = vscode.window.createWebviewPanel(
+                'scrcpyPanel',
+                'Scrcpy Mirror',
+                vscode.ViewColumn.One,
+                { enableScripts: true }
+            );
+            panel.webview.html = getWebviewContent();
+
+            panel.onDidDispose(() => {
+                panel = undefined;
+            }, null, context.subscriptions);
+        } else {
+            panel.reveal(vscode.ViewColumn.One);
+        }
+    });
+
+    context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
+
+function getWebviewContent() {
+    return `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Scrcpy Mirror</title>
+        <style>
+            body { display: flex; justify-content: center; align-items: center; height: 100vh; }
+            button { font-size: 20px; padding: 10px 20px; }
+        </style>
+    </head>
+    <body>
+        <button id="attach">Attach Device</button>
+        <script>
+            document.getElementById('attach').addEventListener('click', () => {
+                vscode.postMessage({ command: 'attachDevice' });
+            });
+        </script>
+    </body>
+    </html>`;
+}
