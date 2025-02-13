@@ -21,7 +21,7 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
-    "compile": "esbuild --bundle src/extension.ts --outdir=out --format=cjs --external:vscode",
+    "compile": "esbuild --bundle src/extension.ts --outdir=out --format=cjs --platform=node --external:vscode",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",
     "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
